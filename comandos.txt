@@ -1,0 +1,5 @@
+git add . ------ Adiciona todos os arquivos modificados e novos ao índice.
+
+git commit -m "mensagem do commit" -------- Realiza o commit das mudanças adicionadas ao índice, com uma mensagem descritiva.
+
+git push -------- adiciona no git web
