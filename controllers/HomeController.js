@@ -1,6 +1,6 @@
 class HomeController{
     async index(req, res){
-        res.send("Projeto Back-End");
+        res.send("Projeto Back-End rodando!");
     }
 }
 

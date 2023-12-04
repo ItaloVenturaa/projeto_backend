@@ -76,9 +76,6 @@ class User {
         }
     }
 
-
-
-
     async update(id, email, name, cargo) {
 
         var user = await this.findById(id);

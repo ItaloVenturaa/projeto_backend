@@ -1,31 +1,8 @@
 #gitignore mantem o repositorio limpo e organizado
-
-# Módulos do Node.js
 node_modules/
 
-# Arquivos de configuração do sistema
-.DS_Store
-Thumbs.db
-
-# Arquivos de log
-logs/
-*.log
-npm-debug.log*
-
-# Arquivos de ambiente
+#arquivos de ambiente e temporários
 .env
-
-# Arquivos de build
-/build/
-
-# Dependências locais
-/dist/
-/tmp/
-/out/
-
-# Arquivos temporários
 *.tmp
 *.bak
-
-# Arquivos específicos do Visual Studio Code
 .vscode/
