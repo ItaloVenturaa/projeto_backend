@@ -1,8 +1,7 @@
 #gitignore mantem o repositorio limpo e organizado
-node_modules/
-
 #arquivos de ambiente e temporários
 .env
 *.tmp
 *.bak
 .vscode/
+node_modules

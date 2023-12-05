@@ -1,18 +1,6 @@
 var User = require("../models/Livro");
 
 class LivroController {
-  async index(req, res) {
-    try {
-      const livros = await Livro.query();
-      res.status(200);
-      res.json({ livros, mensagem: 'Lista de livros recuperada com sucesso' });
-    } catch (error) {
-      console.error(error);
-      res.status(500);
-      res.json({ mensagem: 'Erro ao recuperar a lista de livros' });
-    }
-  }
-
   async show(req, res) {
     const { id } = req.params;
     try {
@@ -81,7 +69,7 @@ class LivroController {
     }
   }
 
-  async listarTodosLivros(req, res) {
+  async list(req, res) {
     try {
       const todosLivros = await Livro.query();
       res.status(200);
@@ -92,6 +80,7 @@ class LivroController {
       res.json({ mensagem: 'Erro ao recuperar a lista de todos os livros' });
     }
   }
+ 
 
 }
 

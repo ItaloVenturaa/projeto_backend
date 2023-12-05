@@ -23,12 +23,11 @@ router.post('/login', UserController.login);
 router.get('/install', Install.insercao);
 
 //rotas para Livros
-router.get('/livros', LivroController.index);
 router.get('/livros/:id', AdminAuth, LivroController.show);
 router.post('/livros', AdminAuth, LivroController.create);
 router.put('/livros/:id', AdminAuth, LivroController.update);
 router.delete('/livros/:id', AdminAuth, LivroController.destroy);
-router.get('/livros-list', LivroController.listarTodosLivros);
+router.get('/livros-list', LivroController.list);
 
 
 module.exports = router;
