@@ -1,7 +1,7 @@
 var bodyParser = require('body-parser')
 var express = require("express")
 var app = express()
-var router = require("./routes/routes")
+var router = require("./routes/route")
 const { swaggerUi, swaggerSpec } = require('./swagger');
  
 // parse application/x-www-form-urlencoded

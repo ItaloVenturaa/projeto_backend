@@ -10,7 +10,7 @@ const options = {
       description: 'Documentação da API de Biblioteca',
     },
   },
-  apis: ['./routes/route.js'], //arquivo de rota
+  apis: ['/routes/route.js'], //arquivo de rota
 };
 
 const swaggerSpec = swaggerJSDoc(options);

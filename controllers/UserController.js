@@ -67,7 +67,7 @@ class UserController {
                 res.status(406);
                 res.json(result.err);
             }
-        }else{
+        } else {
             res.status(404);
             res.send("ocorreu um erro no servidor!");
         }
@@ -77,10 +77,10 @@ class UserController {
         var id = req.params.id;
         var result = await User.delete(id);
 
-        if(result.status){
+        if (result.status) {
             res.status(200);
             res.send("Tudo ok!");
-        }else{
+        } else {
             res.status(406);
             res.send(result.err);
         }
@@ -89,57 +89,86 @@ class UserController {
     async recoverPassword(req, res) {
         var email = req.body.email;
         var result = await PasswordToken.create(email);
-        if(result.status){
+        if (result.status) {
             res.status(200);
             res.send("" + result.token);
-        }else{
+        } else {
             res.status(406);
             res.send(result.err);
         }
-  }
+    }
 
 
     async changePassword(req, res) {
         var token = req.body.token;
-        var passeword = req.body.passeword;
-
+        var password = req.body.password; 
+    
         var isTokenValid = await PasswordToken.validate(token);
-
-        if(isTokenValid.status){
-            await User.changePassword(passeword, isTokenValid.token.user_id, isTokenValid.token.token);
+    
+        if (isTokenValid.status) {
+            await User.changePassword(password, isTokenValid.token.user_id, isTokenValid.token.token);
             res.status(200);
-            res.send("senha alterada");
-        }else{
+            res.send("Senha alterada");
+        } else {
             res.status(406);
-            res.send("token invalido");
+            res.send("Token inválido");
         }
-
-
     }
+    
 
     async login(req, res) {
-        var { email, senha} = req.body;
+        var { email, senha } = req.body;
 
         var user = await User.findByEmail(email);
 
-        if(user != undefined){
+        if (user != undefined) {
 
-            var resultado = await bcrypt.compare(senha,user.senha);
+            var resultado = await bcrypt.compare(senha, user.senha);
 
-            if(resultado){
+            if (resultado) {
 
                 var token = jwt.sign({ email: user.email, cargo: user.cargo }, secret);
                 res.status(200);
-                res.json({ token: token});
-                
-            }else{
-            res.status(406);
-            res.send("Senha incorreta!");
+                res.json({ token: token });
+
+            } else {
+                res.status(406);
+                res.send("Senha incorreta!");
             }
 
-        }else{
-            res.json({status: false});
+        } else {
+            res.json({ status: false });
         }
+    }
+
+    async createAdmin(req, res) {
+        var { email, senha, name } = req.body;
+
+        //verifica se é um administrador
+        if (req.userData.cargo !== 1) {
+            res.status(403); // Código de status para "Forbidden"
+            res.json({ err: "Apenas administradores podem criar outros administradores." });
+            return;
+        }
+
+        if (email == undefined || senha == undefined || name == undefined) {
+            res.status(400);
+            res.json({ err: "Dados inválidos!" });
+            return;
+        }
+
+        var emailExists = await User.findEmail(email);
+        if (emailExists) {
+            res.status(406);
+            res.json({ err: "Email já cadastrado!" });
+            return;
+        }
+
+        //cria novo adm
+        await User.new(email, senha, name, 1);
+
+        res.status(200);
+        res.send("Administrador criado com sucesso!");
     }
 
 }

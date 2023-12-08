@@ -12,12 +12,15 @@ router.get('/', HomeController.index);
 //rotas para Usuários
 router.post('/user', UserController.create);
 router.get('/user', AdminAuth, UserController.list);
-router.get('/user/:id', AdminAuth, UserController.findUser);
+router.get('/user/:id', AdminAtuth, UserController.findUser);
 router.put('/user', AdminAuth, UserController.edit);
 router.delete('/user/:id', AdminAuth, UserController.remove);
 router.post('/recoverpassword', UserController.recoverPassword);
 router.post('/changepassword', UserController.changePassword);
 router.post('/login', UserController.login);
+
+//adm cria adm
+router.post('/criadmin', AdminAuth, UserController.createAdmin);
 
 //rota para Instalação dos dados no BD
 router.get('/install', Install.insercao);

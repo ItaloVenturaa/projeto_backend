@@ -80,7 +80,7 @@ class LivroController {
       res.json({ mensagem: 'Erro ao recuperar a lista de todos os livros' });
     }
   }
- 
+
 
 }
 
