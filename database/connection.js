@@ -1,11 +1,19 @@
 const knex = require('knex')({
-  client: process.env.DB_CLIENT,
+  client: 'mysql2',
   connection: {
-    host : process.env.DB_HOST,
-    user : process.env.DB_USER,
-    password : process.env.DB_PASSWORD,
-    database : process.env.DB_NAME,
+    host: 'localhost',
+    user: 'root',
+    password: '123456789!',
+    database: 'testebackend',
   },
 });
+
+knex.raw('select 1+1 as result')
+  .then(() => {
+    console.log('Conexão com o banco de dados estabelecida com sucesso!');
+  })
+  .catch((err) => {
+    console.error('Erro ao conectar ao banco de dados:', err);
+  });
 
 module.exports = knex;

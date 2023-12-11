@@ -14,7 +14,7 @@ class Install {
         
             //inserção de dados iniciais na tabela de livros
             await knex('livros').insert([
-              { titulo: 'Aventuras de Chat', autor: 'Chat GPT', quantidade_disponivel: 5 },
+              { titulo: 'Diario de um Banana', autor: 'Banana', quantidade_disponivel: 5 },
               { titulo: 'JavaScript para Iniciantes', autor: 'Coder Pro', quantidade_disponivel: 8 },
               { titulo: 'A Arte da Guerra', autor: 'Sun Tzu', quantidade_disponivel: 3 },
               { titulo: 'O Senhor dos Anéis', autor: 'J.R.R. Tolkien', quantidade_disponivel: 10 },

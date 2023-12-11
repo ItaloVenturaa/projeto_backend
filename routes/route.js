@@ -3,16 +3,17 @@ var app = express();
 var router = express.Router();
 var HomeController = require("../controllers/HomeController");
 var UserController = require("../controllers/UserController");
-const LivroController = require('./controllers/LivroController');
+const LivroController = require('../controllers/LivroController');
 var AdminAtuth = require("../middleware/AdminAuth");
 const Install = require("../database/Install");
+const AdminAuth = require("../middleware/AdminAuth");
 
 router.get('/', HomeController.index);
 
 //rotas para Usuários
 router.post('/user', UserController.create);
 router.get('/user', AdminAuth, UserController.list);
-router.get('/user/:id', AdminAtuth, UserController.findUser);
+router.get('/user/:id', AdminAuth, UserController.findUser);
 router.put('/user', AdminAuth, UserController.edit);
 router.delete('/user/:id', AdminAuth, UserController.remove);
 router.post('/recoverpassword', UserController.recoverPassword);
