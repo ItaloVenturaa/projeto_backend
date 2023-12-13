@@ -1,62 +1,74 @@
-var knex = require("../database/connection");
-var User = require("./User");
+const { DataTypes } = require('sequelize');
+const sequelize = require('../database/connection');
+
+const Token = sequelize.define('Token', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  used: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  token: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
 
 class PasswordToken {
+  async create(email) {
+    const user = await User.findByEmail(email);
 
-    async create(email) {
-        var user = await User.findByEmail(email);
-        if (user != undefined) {
+    if (user) {
+      try {
+        const token = Date.now().toString();
+        await Token.create({
+          user_id: user.id,
+          used: false,
+          token: token,
+        });
 
-            try {
-                var token = Date.now(); //uuid
-                await knex.insert({
-                    user_id: user.id,
-                    used: 0,
-                    token: token
-                }).table("passwordToken");
-                return {status: true, token: token};
-            } catch (err) {
-                console.log(err);
-                return {status: false, err: err};
-            }
+        return { status: true, token: token };
+      } catch (error) {
+        console.log(error);
+        return { status: false, err: error };
+      }
+    } else {
+      return { status: false, err: 'O email passado não existe no banco de dados!' };
+    }
+  }
 
+  async validate(token) {
+    try {
+      const passwordToken = await Token.findOne({
+        where: { token: token },
+      });
+
+      if (passwordToken) {
+        if (passwordToken.used) {
+          return { status: false };
         } else {
-            return { status: false, err: "O email passado não existe no banco de dados!" }
+          return { status: true, token: passwordToken };
         }
+      } else {
+        return { status: false };
+      }
+    } catch (error) {
+      console.log(error);
+      return { status: false };
     }
+  }
 
-    async validate(token){
-
-        try {
-            var result = await knex.select().where({token: token}).table("passwordtokens");   
-            
-            if(result.length > 0){
-
-                var tk = result[0];
-                
-                if(tk.used){
-                    return {status: false};
-                }else{
-                    return {status: true, token: tk};
-                }
-
-            }else{
-                return {status: false};
-            }
-            
-        } catch (error) {
-            console.log(err);
-            return {status: false};
-        }
-
-
-    }
-
-    async setUsed(token){
-        await knex.update({used: 1}).where({token: token}).table("passwordtokens");
-    }
-
-
+  async setUsed(token) {
+    await Token.update({ used: true }, { where: { token: token } });
+  }
 }
 
 module.exports = new PasswordToken();

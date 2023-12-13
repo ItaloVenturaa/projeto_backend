@@ -1,144 +1,141 @@
-var knex = require("../database/connection");
-var bcrypt = require("bcrypt");
-const PasswordToken = require("./PasswordToken");
-//service
+const { DataTypes } = require('sequelize');
+const sequelize = require('../database/connection');
+const bcrypt = require('bcrypt');
+const PasswordToken = require('./PasswordToken');
 
-class User {
+const User = sequelize.define(
+  'User',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    nome: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    senha: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    cargo: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+  },
+  {
+    tableName: 'users',
+    timestamps: false,
+  }
+);
 
+User.prototype.findAll = async function () {
+  try {
+    const result = await User.findAll({ attributes: ['id', 'nome', 'email', 'cargo'] });
+    return result;
+  } catch (err) {
+    console.log(err);
+    return undefined;
+  }
+};
 
-    async findAll() {
-        try {
-            var result = await knex.select(["id", "nome", "email", "cargo"]).table("users");
+User.prototype.findById = async function (id) {
+  try {
+    const result = await User.findByPk(id, { attributes: ['id', 'nome', 'email', 'cargo'] });
+    return result;
+  } catch (err) {
+    console.log(err);
+    return undefined;
+  }
+};
 
-            if (result.length > 0) {
-                return result[0];
-            } else {
-                return undefined;
-            }
+User.prototype.new = async function (email, senha, name) {
+  try {
+    const hash = await bcrypt.hash(senha, 2);
+    await User.create({ email, senha: hash, nome: name, cargo: 0 });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
-        } catch (err) {
-            console.log(err);
-            return undefined;
-        }
+User.prototype.findEmail = async function (email) {
+  try {
+    const result = await User.findOne({ where: { email } });
+    return result !== null;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+};
+
+User.prototype.findByEmail = async function (email) {
+  try {
+    const result = await User.findOne({ where: { email }, attributes: ['id', 'nome', 'email', 'senha', 'cargo'] });
+    return result;
+  } catch (err) {
+    console.log(err);
+    return undefined;
+  }
+};
+
+User.prototype.update = async function (id, email, name, cargo) {
+  const user = await this.findById(id);
+
+  if (user !== undefined) {
+    const editUser = {};
+
+    if (email !== undefined && email !== user.email) {
+      const result = await this.findEmail(email);
+      if (!result) {
+        editUser.email = email;
+      } else {
+        return { status: false, err: 'O email já está cadastrado!' };
+      }
     }
 
-    async findById(id) {
-        try {
-            var result = await knex.select(["id", "nome", "email", "cargo"]).where({ id: id }).table("users");
-            if (result.length > 0) {
-                return result[0];
-            } else {
-                return undefined;
-            }
-        } catch (err) {
-            console.log(err);
-            return undefined;
-        }
+    if (name !== undefined) {
+      editUser.nome = name;
     }
 
-
-
-    async new(email, senha, name) {
-
-        try {
-            //hash é a senha crua e codificada, para garantir a privacidade do usuario
-            var hash = await bcrypt.hash(senha, 2);
-
-            await knex.insert({ email, senha: hash, name, cargo: 0 }).table("users");
-
-        } catch (err) {
-            console.log(err);
-        }
+    if (cargo !== undefined) {
+      editUser.cargo = cargo;
     }
 
-    //aqui eu confiro se o email do usuario ja exite no banco ou não
-    async findEmail(email) {
-        try {
-            var result = await knex.select("*").from("users").where({ email: email });
-            return result.length > 0;
-        } catch (err) {
-            console.log(err);
-            return false;
-        }
+    try {
+      await User.update(editUser, { where: { id } });
+      return { status: true };
+    } catch (err) {
+      return { status: false, err };
     }
+  } else {
+    return { status: false, err: 'O usuário não existe!' };
+  }
+};
 
-    async findByEmail(email) {
-        try {
-            var result = await knex.select(["id", "nome","senha", "email", "cargo"]).where({ email: email }).table("users");
-            if (result.length > 0) {
-                return result[0];
-            } else {
-                return undefined;
-            }
-        } catch (err) {
-            console.log(err);
-            return undefined;
-        }
+User.prototype.delete = async function (id) {
+  const user = await this.findById(id);
+  if (user !== undefined) {
+    try {
+      await User.destroy({ where: { id } });
+      return { status: true };
+    } catch (err) {
+      return { status: false, err };
     }
+  } else {
+    return { status: false, err: 'O usuário não existe, portanto não pode ser deletado' };
+  }
+};
 
-    async update(id, email, name, cargo) {
+User.prototype.changePassword = async function (newPassword, id, token) {
+  const hash = await bcrypt.hash(newPassword, 2);
+  await User.update({ senha: hash }, { where: { id } });
+  await PasswordToken.setUsed(token);
+};
 
-        var user = await this.findById(id);
-
-        if (user != undefined) {
-
-            var editUser = {};
-
-            if (email != undefined) {
-                if (email != user.email) {
-                    var result = await this.findEmail(email);
-                    if (result == false) {
-                        editUser.email = email;
-                    } else {
-                        return { status: false, err: "O email ja esta cadastrado!" };
-                    }
-                }
-            }
-
-            if (name != undefined) {
-                editUser.name = name;
-            }
-
-            if (cargo != undefined) {
-                editUser.cargo = cargo;
-            }
-
-            try {
-                await knex.update(editUser).where({ id: id }).table("users");
-                return { status: true };
-            } catch (e) {
-                return { status: false, err: err };
-            }
-
-        } else {
-            return { status: false, err: "O usuario não existe!" };
-        }
-
-    }
-
-    async delete(id) {
-        var user = await this.findById(id);
-        if (user != undefined) {
-            try {
-                await knex.delete().where({ id: id }).table("users");
-                return { status: true };
-            }
-            catch (err) {
-                return { status: false, err: err }
-            }
-        } else {
-            return { status: false, err: "O usuario não existe, portanto não pode ser deletado" }
-        }
-    }
-
-
-
-    async changePassword(newPassword, id, token) {
-        var hash = await bcrypt.hash(newPassword, 2);
-        await knex.update({ senha: hash }).where({ id: id }).table("users");
-        await PasswordToken.setUsed(token);
-    }
-
-}
-
-module.exports = new User();
+module.exports = User;

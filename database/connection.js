@@ -1,14 +1,16 @@
-const knex = require('knex')({
-  client: 'mysql2',
-  connection: {
-    host: 'localhost',
-    user: 'root',
-    password: '123456789!',
-    database: 'testebackend',
-  },
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize({
+  dialect: 'mysql',
+  host: 'localhost',
+  username: 'root',
+  password: '123456789!',
+  database: 'testebackend',
 });
 
-knex.raw('select 1+1 as result')
+// Testar a conexão
+sequelize
+  .authenticate()
   .then(() => {
     console.log('Conexão com o banco de dados estabelecida com sucesso!');
   })
@@ -16,4 +18,4 @@ knex.raw('select 1+1 as result')
     console.error('Erro ao conectar ao banco de dados:', err);
   });
 
-module.exports = knex;
+module.exports = sequelize;
