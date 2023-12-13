@@ -23,18 +23,20 @@ class Install {
       await Usuario.sync();
 
       // Inserção de dados iniciais na tabela de usuários
-      await Usuario.bulkCreate([
-        { nome: 'Admin 1', email: 'admin1@example.com', cargo: 1 },
-        { nome: 'Admin 2', email: 'admin2@example.com', cargo: 1 },
-        { nome: 'Usuário 1', email: 'usuario1@example.com', cargo: 0 },
-        { nome: 'Usuário 2', email: 'usuario2@example.com', cargo: 0 },
-        { nome: 'Usuário 3', email: 'usuario3@example.com', cargo: 0 },
-        { nome: 'Usuário 4', email: 'usuario4@example.com', cargo: 0 },
-        { nome: 'Usuário 5', email: 'usuario5@example.com', cargo: 0 },
-        { nome: 'Usuário 6', email: 'usuario6@example.com', cargo: 0 },
-        { nome: 'Usuário 7', email: 'usuario7@example.com', cargo: 0 },
-        { nome: 'Usuário 8', email: 'usuario8@example.com', cargo: 0 },
-      ]);
+      const usuariosComSenhasAleatorias = [
+        { nome: 'Admin 1', email: 'admin1@example.com', cargo: 1, senha: gerarSenhaAleatoria() },
+        { nome: 'Admin 2', email: 'admin2@example.com', cargo: 1, senha: gerarSenhaAleatoria() },
+        { nome: 'Usuário 1', email: 'usuario1@example.com', cargo: 0, senha: gerarSenhaAleatoria() },
+        { nome: 'Usuário 2', email: 'usuario2@example.com', cargo: 0, senha: gerarSenhaAleatoria() },
+        { nome: 'Usuário 3', email: 'usuario3@example.com', cargo: 0, senha: gerarSenhaAleatoria() },
+        { nome: 'Usuário 4', email: 'usuario4@example.com', cargo: 0, senha: gerarSenhaAleatoria() },
+        { nome: 'Usuário 5', email: 'usuario5@example.com', cargo: 0, senha: gerarSenhaAleatoria() },
+        { nome: 'Usuário 6', email: 'usuario6@example.com', cargo: 0, senha: gerarSenhaAleatoria() },
+        { nome: 'Usuário 7', email: 'usuario7@example.com', cargo: 0, senha: gerarSenhaAleatoria() },
+        { nome: 'Usuário 8', email: 'usuario8@example.com', cargo: 0, senha: gerarSenhaAleatoria() },
+      ];
+
+      await Usuario.bulkCreate(usuariosComSenhasAleatorias);
 
       console.log('Instalação concluída com sucesso!');
     } catch (error) {
@@ -43,5 +45,19 @@ class Install {
     }
   }
 }
+
+function gerarSenhaAleatoria() {
+  const comprimento = 6; // Defina o comprimento desejado da senha
+  const caracteresAleatorios = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let senha = '';
+
+  for (let i = 0; i < comprimento; i++) {
+    const indiceAleatorio = Math.floor(Math.random() * caracteresAleatorios.length);
+    senha += caracteresAleatorios.charAt(indiceAleatorio);
+  }
+
+  return senha;
+}
+
 
 module.exports = new Install();
