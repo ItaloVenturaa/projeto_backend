@@ -4,10 +4,10 @@ const Usuario = require('../models/User');
 class Install {
   async insercao() {
     try {
-      // Criação da tabela de livros
+      //tabela de livros
       await Livro.sync();
 
-      // Inserção de dados iniciais na tabela de livros
+      //dados iniciais na tabela de livros
       await Livro.bulkCreate([
         { titulo: 'Diario de um Banana', autor: 'Banana', quantidade_disponivel: 5 },
         { titulo: 'JavaScript para Iniciantes', autor: 'Coder Pro', quantidade_disponivel: 8 },
@@ -19,10 +19,10 @@ class Install {
         { titulo: 'Python para Ciência de Dados', autor: 'Data Scientist', quantidade_disponivel: 4 },
       ]);
 
-      // Criação da tabela de usuários
+      //tabela de usuários
       await Usuario.sync();
 
-      // Inserção de dados iniciais na tabela de usuários
+      //dados iniciais na tabela de usuários
       const usuariosComSenhasAleatorias = [
         { nome: 'Admin 1', email: 'admin1@example.com', cargo: 1, senha: gerarSenhaAleatoria() },
         { nome: 'Admin 2', email: 'admin2@example.com', cargo: 1, senha: gerarSenhaAleatoria() },
@@ -47,7 +47,7 @@ class Install {
 }
 
 function gerarSenhaAleatoria() {
-  const comprimento = 6; // Defina o comprimento desejado da senha
+  const comprimento = 6; //comprimento da senha
   const caracteresAleatorios = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let senha = '';
 

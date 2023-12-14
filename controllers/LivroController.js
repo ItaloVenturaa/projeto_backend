@@ -1,6 +1,7 @@
-var User = require("../models/Livro");
+var Livro = require("../models/Livro");
 
 class LivroController {
+  //recupera um livro por ID
   async show(req, res) {
     const { id } = req.params;
     try {
@@ -19,6 +20,7 @@ class LivroController {
     }
   }
 
+  //cria um novo livro
   async create(req, res) {
     const { titulo, autor, quantidade_disponivel } = req.body;
     try {
@@ -32,6 +34,7 @@ class LivroController {
     }
   }
 
+  //atualiza as informações de um livro por ID
   async update(req, res) {
     const { id } = req.params;
     const { titulo, autor, quantidade_disponivel } = req.body;
@@ -51,6 +54,7 @@ class LivroController {
     }
   }
 
+  //exclui um livro por ID
   async destroy(req, res) {
     const { id } = req.params;
     try {
@@ -69,6 +73,7 @@ class LivroController {
     }
   }
 
+  //todos os livros
   async list(req, res) {
     try {
       const todosLivros = await Livro.query();
@@ -80,8 +85,6 @@ class LivroController {
       res.json({ mensagem: 'Erro ao recuperar a lista de todos os livros' });
     }
   }
-
-
 }
 
 module.exports = new LivroController();

@@ -6,29 +6,30 @@ const LivroController = require('../controllers/LivroController');
 const AdminAuth = require('../middleware/AdminAuth');
 const Install = require('../database/Install');
 
+// rota principal
 router.get('/', HomeController.index);
 
-// Rotas para Usuários
-router.post('/user', UserController.create);
-router.get('/user', AdminAuth, UserController.list);
-router.get('/user/:id', AdminAuth, UserController.findUser);
-router.put('/user', AdminAuth, UserController.edit);
-router.delete('/user/:id', AdminAuth, UserController.remove);
-router.post('/recoverpassword', UserController.recoverPassword);
-router.post('/changepassword', UserController.changePassword);
-router.post('/login', UserController.login);
+// rotas para usuários
+router.post('/user', UserController.create); // criação de usuário
+router.get('/user', AdminAuth, UserController.list); // lista de usuários 
+router.get('/user/:id', AdminAuth, UserController.findUser); // busca de usuário por id 
+router.put('/user', AdminAuth, UserController.edit); // edição de usuário 
+router.delete('/user/:id', AdminAuth, UserController.remove); // remoção de usuário por id 
+router.post('/recoverpassword', UserController.recoverPassword); // recuperação de senha
+router.post('/changepassword', UserController.changePassword); // alteração de senha
+router.post('/login', UserController.login); // login de usuário
 
-// Adm cria adm
-router.post('/criadmin', AdminAuth, UserController.createAdmin);
+// admin cria admin
+router.post('/criadmin', AdminAuth, UserController.createAdmin); //criação de administrador 
 
-// Rota para instalação dos dados no BD
+// rota para instalação dos dados no bd
 router.get('/install', Install.insercao);
 
-// Rotas para Livros
-router.get('/livros/:id', AdminAuth, LivroController.show);
-router.post('/livros', AdminAuth, LivroController.create);
-router.put('/livros/:id', AdminAuth, LivroController.update);
-router.delete('/livros/:id', AdminAuth, LivroController.destroy);
-router.get('/livros-list', LivroController.list);
+// rotas para livros
+router.get('/livros/:id', AdminAuth, LivroController.show); //exibição de livro por id 
+router.post('/livros', AdminAuth, LivroController.create); //criação de livro 
+router.put('/livros/:id', AdminAuth, LivroController.update); //atualização de livro por id 
+router.delete('/livros/:id', AdminAuth, LivroController.destroy); //remoção de livro por id 
+router.get('/livros-list', LivroController.list); // lista de livros
 
 module.exports = router;

@@ -3,6 +3,7 @@ const sequelize = require('../database/connection');
 const bcrypt = require('bcrypt');
 const PasswordToken = require('./PasswordToken');
 
+//modelo User
 const User = sequelize.define(
   'User',
   {
@@ -35,6 +36,7 @@ const User = sequelize.define(
   }
 );
 
+//buscar todos os usuários
 User.prototype.findAll = async function () {
   try {
     const result = await User.findAll({ attributes: ['id', 'nome', 'email', 'cargo'] });
@@ -45,6 +47,7 @@ User.prototype.findAll = async function () {
   }
 };
 
+//buscar usuário por ID
 User.prototype.findById = async function (id) {
   try {
     const result = await User.findByPk(id, { attributes: ['id', 'nome', 'email', 'cargo'] });
@@ -55,6 +58,7 @@ User.prototype.findById = async function (id) {
   }
 };
 
+//criar novo usuário
 User.prototype.new = async function (email, senha, name) {
   try {
     const hash = await bcrypt.hash(senha, 2);
@@ -64,6 +68,7 @@ User.prototype.new = async function (email, senha, name) {
   }
 };
 
+//verificar se o email já está cadastrado
 User.prototype.findEmail = async function (email) {
   try {
     const result = await User.findOne({ where: { email } });
@@ -74,6 +79,7 @@ User.prototype.findEmail = async function (email) {
   }
 };
 
+//buscar usuário por email
 User.prototype.findByEmail = async function (email) {
   try {
     const result = await User.findOne({ where: { email }, attributes: ['id', 'nome', 'email', 'senha', 'cargo'] });
@@ -84,6 +90,7 @@ User.prototype.findByEmail = async function (email) {
   }
 };
 
+//atualizar informações do usuário
 User.prototype.update = async function (id, email, name, cargo) {
   const user = await this.findById(id);
 
@@ -118,6 +125,7 @@ User.prototype.update = async function (id, email, name, cargo) {
   }
 };
 
+//deletar usuário por ID
 User.prototype.delete = async function (id) {
   const user = await this.findById(id);
   if (user !== undefined) {
@@ -132,6 +140,7 @@ User.prototype.delete = async function (id) {
   }
 };
 
+//alterar a senha do usuário
 User.prototype.changePassword = async function (newPassword, id, token) {
   const hash = await bcrypt.hash(newPassword, 2);
   await User.update({ senha: hash }, { where: { id } });

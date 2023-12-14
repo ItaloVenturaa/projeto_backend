@@ -6,11 +6,13 @@ var bcrypt = require("bcrypt");
 
 class UserController {
 
+    //todos os usuários
     async list(req, res) {
         var users = await User.findAll();
         res.json(users);
     }
 
+    //busca um usuário por ID
     async findUser(req, res) {
         var id = req.params.id;
         var user = await User.findById(id);
@@ -23,6 +25,7 @@ class UserController {
         }
     }
 
+    //cria um novo usuário
     async create(req, res) {
         var { email, senha, name } = req.body;
 
@@ -45,34 +48,35 @@ class UserController {
         var emailExists = await User.findEmail(email);
         if (emailExists) {
             res.status(406);
-            res.json({ err: "Email ja esta cadastrado!" })
+            res.json({ err: "Email já está cadastrado!" })
             return;
         }
-
 
         await User.new(email, senha, name);
 
         res.status(200);
-        res.send("tudo ok!");
+        res.send("Tudo ok!");
     }
 
+    //edita um usuário
     async edit(req, res) {
         var { id, email, cargo, name } = req.body;
         var result = await User.update(id, email, cargo, name);
         if (result != undefined) {
             if (result.status) {
                 res.status(200);
-                res.send("tudo ok!");
+                res.send("Tudo ok!");
             } else {
                 res.status(406);
                 res.json(result.err);
             }
         } else {
             res.status(404);
-            res.send("ocorreu um erro no servidor!");
+            res.send("Ocorreu um erro no servidor!");
         }
-
     }
+
+    //remove um usuário por ID
     async remove(req, res) {
         var id = req.params.id;
         var result = await User.delete(id);
@@ -86,6 +90,7 @@ class UserController {
         }
     }
 
+    //solicita recuperação de senha
     async recoverPassword(req, res) {
         var email = req.body.email;
         var result = await PasswordToken.create(email);
@@ -98,7 +103,7 @@ class UserController {
         }
     }
 
-
+    //altera a senha com base em um token
     async changePassword(req, res) {
         var token = req.body.token;
         var password = req.body.password; 
@@ -114,8 +119,8 @@ class UserController {
             res.send("Token inválido");
         }
     }
-    
 
+    //login do usuário
     async login(req, res) {
         var { email, senha } = req.body;
 
@@ -141,12 +146,13 @@ class UserController {
         }
     }
 
+    //cria um administrador
     async createAdmin(req, res) {
         var { email, senha, name } = req.body;
 
         //verifica se é um administrador
         if (req.userData.cargo !== 1) {
-            res.status(403); // Código de status para "Forbidden"
+            res.status(403); //código de status para "Forbidden"
             res.json({ err: "Apenas administradores podem criar outros administradores." });
             return;
         }
@@ -164,7 +170,7 @@ class UserController {
             return;
         }
 
-        //cria novo adm
+        //novo administrador
         await User.new(email, senha, name, 1);
 
         res.status(200);
@@ -172,6 +178,5 @@ class UserController {
     }
 
 }
-
 
 module.exports = new UserController();

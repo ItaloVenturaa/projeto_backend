@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/connection');
 
+//modelo Livro
 const Livro = sequelize.define(
   'Livro',
   {
@@ -28,6 +29,7 @@ const Livro = sequelize.define(
   }
 );
 
+//buscar todos os livros
 Livro.prototype.findAll = async function () {
   try {
     const result = await Livro.findAll({ attributes: ['id', 'titulo', 'autor', 'quantidade_disponivel'] });
@@ -38,6 +40,7 @@ Livro.prototype.findAll = async function () {
   }
 };
 
+//buscar livro por ID
 Livro.prototype.findById = async function (id) {
   try {
     const result = await Livro.findByPk(id, { attributes: ['id', 'titulo', 'autor', 'quantidade_disponivel'] });
@@ -48,6 +51,7 @@ Livro.prototype.findById = async function (id) {
   }
 };
 
+//criar novo livro
 Livro.prototype.create = async function (titulo, autor, quantidade_disponivel) {
   try {
     await Livro.create({ titulo, autor, quantidade_disponivel });
@@ -56,6 +60,7 @@ Livro.prototype.create = async function (titulo, autor, quantidade_disponivel) {
   }
 };
 
+//atualizar informações do livro
 Livro.prototype.update = async function (id, titulo, autor, quantidade_disponivel) {
   const livro = await this.findById(id);
 
@@ -85,6 +90,7 @@ Livro.prototype.update = async function (id, titulo, autor, quantidade_disponive
   }
 };
 
+//deletar livro por ID
 Livro.prototype.delete = async function (id) {
   const livro = await this.findById(id);
 

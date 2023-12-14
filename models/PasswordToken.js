@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database/connection');
 
+//modelo Token
 const Token = sequelize.define('Token', {
   id: {
     type: DataTypes.INTEGER,
@@ -23,6 +24,7 @@ const Token = sequelize.define('Token', {
 });
 
 class PasswordToken {
+  //criar um token de senha
   async create(email) {
     const user = await User.findByEmail(email);
 
@@ -45,6 +47,7 @@ class PasswordToken {
     }
   }
 
+  //validar um token
   async validate(token) {
     try {
       const passwordToken = await Token.findOne({
@@ -66,6 +69,7 @@ class PasswordToken {
     }
   }
 
+  //marcar um token como usado
   async setUsed(token) {
     await Token.update({ used: true }, { where: { token: token } });
   }
